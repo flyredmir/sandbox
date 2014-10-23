@@ -67,7 +67,7 @@ eclipse{
 		facet {
 			// Servlet Spec Version 지정
 			facet name: 'jst.web', version: '3.0'
-			// Java Version 지정, 1.7
+			// Java Version 지정
 			facet name: 'jst.java', version: '1.8'
 			// Javascript 지정, 1.0
 			facet name: 'wst.jsdt.web', version: '1.0'
