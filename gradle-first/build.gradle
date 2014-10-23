@@ -1,0 +1,76 @@
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'eclipse-wtp'
+
+sourceCompatibility = 1.8
+version = '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+//compile 시 output 위치 설정
+sourceSets {
+	main {
+		 // default 값은 build/classes/main, build/resources/main
+		output.classesDir = 'build/classes'
+		output.resourcesDir = 'build/classes'
+	 }
+	 test {
+		 // default 값은 build/classes/test, build/resources/test
+		output.classesDir = 'build/test-classes'
+		output.resourcesDir = 'build/test-classes'
+	}
+}
+
+// JAVA 컴파일시 인코딩 설정
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+dependencies {
+    compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
+    compile 'ch.qos.logback:logback-classic:1.1.2'
+	compile 'org.springframework:spring-webmvc:4.0.6.RELEASE'
+	compile 'jstl:jstl:1.2'
+	//include in compile only, exclude in the war
+	providedCompile 'javax.servlet:servlet-api:2.5'
+    testCompile group: 'junit', name: 'junit', version: '4.+'
+}
+
+// 모든 의존성에서 commons-logging는 제외
+[configurations.runtime, configurations.default]*.exclude(module: 'commons-logging')
+
+
+test {
+	 jvmArgs = ['-ea', '-Xmx256m']
+	 logging.captureStandardOutput(LogLevel.INFO)
+	 reports.html.enabled = true // getReports().getHtml().setEnabled(true)
+}
+
+eclipse{
+	 classpath {
+	 	defaultOutputDir = file("build/classes")
+		 // src/test/java, src/test/resources의 output 디렉토리를 지정한다.
+		 file {
+		 	whenMerged { cp ->
+			 cp.entries.findAll{ entry ->
+				entry.kind == 'src' && entry.path.startsWith("src/test/")
+			 }*.output = "build/test-classes" 
+			 }
+		 }
+	 }
+	 
+	wtp {
+		component {
+		 // 원하는 contextPath 지정. 단, 빈 컨텍스트패스는 '/' 로 지정
+		contextPath = project.name
+		}
+		facet {
+			// Servlet Spec Version 지정
+			facet name: 'jst.web', version: '3.0'
+			// Java Version 지정, 1.7
+			facet name: 'jst.java', version: '1.8'
+			// Javascript 지정, 1.0
+			facet name: 'wst.jsdt.web', version: '1.0'
+		}
+	}
+}
