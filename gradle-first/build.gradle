@@ -3,6 +3,7 @@ apply plugin: 'war'
 apply plugin: 'eclipse-wtp'
 
 sourceCompatibility = 1.7
+targetCompatibility = 1.7
 
 version = '1.0'
 
@@ -26,6 +27,8 @@ sourceSets {
 
 // JAVA 컴파일시 인코딩 설정
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+// Gradle 에 컴파일러 옵션 적용
+[compileJava, compileTestJava]*.options*.compilerArgs = ['-Xlint:-options']
 
 dependencies {
 	providedCompile 'javax.servlet:servlet-api:2.5'
@@ -46,8 +49,6 @@ test {
 	 logging.captureStandardOutput(LogLevel.INFO)
 	 reports.html.enabled = true
 }
-
-jettyRunWar.contextPath = ''
 
 eclipse{
 	 classpath {
